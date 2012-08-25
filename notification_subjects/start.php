@@ -10,9 +10,24 @@ function notification_subjects_init(){
 
 
 function notification_subjects_modify_subject($hook, $type, $returnvalue, $params){
+  // full memoization not needed, just remember last call
+  static $last_guid;
+  static $last_event;
+  static $last_return;
+
   $event = $params['event'];
-  $object = $params['object'];
-  
+  $object = $params['object']; /* @var ElggObject $object */
+
+  if ($last_event !== $event || $last_guid !== $object->guid) {
+    $returnvalue = notification_subjects_get_hook_return($event, $object, $returnvalue);
+    $last_return = $returnvalue;
+    $last_event = $event;
+    $last_guid = $object->guid;
+  }
+  return $last_return;
+}
+
+function notification_subjects_get_hook_return($event, ElggObject $object, $current_value) {
   $object_type = $object->getType() ? $object->getType() : '__BLANK__';
   $object_subtype = $object->getSubtype() ? $object->getSubtype() : '__BLANK__';
   
@@ -36,13 +51,13 @@ function notification_subjects_modify_subject($hook, $type, $returnvalue, $param
       $title = notification_subjects_build_title($event, $object);
       $objects[$object_type][$object_subtype] = $title;
       elgg_set_config('register_objects', $objects);
-      return $returnvalue;
+      return $current_value;
       break;
     
     case 'default':
     default:
       // don't change anything
-      return $returnvalue;
+      return $current_value;
       break;
     
   }
@@ -53,8 +68,7 @@ function notification_subjects_modify_subject($hook, $type, $returnvalue, $param
 // constructs a title like:
 // Matt Beckett created a group blog post: My latest blog post
 // $owner $event {$group/null} {$subtype}: $title
-function notification_subjects_build_title($event, $object){
-  
+function notification_subjects_build_title($event, ElggObject $object){
   // owners name
   $title = $object->getOwnerEntity()->name;
   
