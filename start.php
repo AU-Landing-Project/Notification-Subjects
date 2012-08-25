@@ -10,7 +10,7 @@ function notification_subjects_init(){
 
 
 function notification_subjects_modify_subject($hook, $type, $returnvalue, $params){
-  // full memoization not needed, just remember last call
+  // full memorization not needed, just remember last call
   static $last_guid;
   static $last_event;
   static $last_return;
