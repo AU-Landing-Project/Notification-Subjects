@@ -1,0 +1,6 @@
+== Version History ==
+
+x.x:
+
+1.1 (08/24/2012):
+	- optimized repetitive hook with identical params (courtesy of Steve Clay)
