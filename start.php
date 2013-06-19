@@ -73,12 +73,7 @@ function notification_subjects_build_title($event, ElggObject $object){
   $title = $object->getOwnerEntity()->name;
   
   // event create/update/delete - send to past tense
-  $title .= " " . elgg_echo('notification_subjects:event:' . $event);
-  
-  // find out if it's a group or personal item
-  if($object->getContainerEntity() instanceof ElggGroup){
-    $title .= " " . elgg_echo('notification_subjects:group');
-  }
+  $title .= ' ' . elgg_echo('notification_subjects:event:' . $event);
   
   // put in the subtype
   $subtype = elgg_echo('notification_subjects:subtype:' . $object->getSubtype());
@@ -89,7 +84,15 @@ function notification_subjects_build_title($event, ElggObject $object){
     $subtype = elgg_echo($object->getSubtype());
   }
   
-  $title .= " " . $subtype . ": ";
+  $title .= ' ' . $subtype;
+  
+  // find out if it's a group or personal item
+  $container = $object->getContainerEntity();
+  if(elgg_instanceof($container, 'group')){
+    $title .= " " . elgg_echo('notification_subjects:group', array($container->name));
+  }
+  
+  $title .= ': ';
   
   // add in the title of the object
   // limit the length to ~25 chars

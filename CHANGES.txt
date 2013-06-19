@@ -2,5 +2,8 @@
 
 x.x:
 
+1.2 (06/192013):
+	- better groups support in subjects
+
 1.1 (08/24/2012):
 	- optimized repetitive hook with identical params (courtesy of Steve Clay)
