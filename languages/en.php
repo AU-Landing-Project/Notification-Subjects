@@ -28,6 +28,8 @@ $english = array(
     'notification_subjects:subtype:page_top' => "Page",
     'notification_subjects:subtype:poll' => "Poll",
     'notification_subjects:subtype:thewire' => "Wire Post",
+	
+	'notification_subjects:disclaimer' => 'Note that not all items listed here may send out notifications',
     
 );
 					

@@ -1,9 +1,15 @@
 <?php
 
 // get registered objects
-$objects = elgg_get_config('register_objects');
+//$objects = elgg_get_config('register_objects');
+$objects = get_registered_entity_types('object');
+$registered_objects = elgg_get_config('register_objects');
 
-foreach($objects as $object_type => $subtype_array){
+echo elgg_view('output/longtext', array(
+	'value' => elgg_echo('notification_subjects:disclaimer')
+));
+
+//foreach($objects as $object_type => $subtype_array){
   echo "<label>" . elgg_echo($object_type) . "</label><br>";
   echo '<table class="notification_subjects_settings"><tr class="notification_subjects_headings"><td>';
   echo elgg_echo('notification_subjects:subtype');
@@ -14,8 +20,8 @@ foreach($objects as $object_type => $subtype_array){
   echo "</td></tr>";
   
   $zebra = "odd";
-  foreach($subtype_array as $subtype => $subject){
-    $param = $object_type . "_" . $subtype;
+  foreach($objects as $subtype){
+    $param = "object_" . $subtype;
     $options = array(
         'name' => "params[{$param}]",
         'value' => $vars['entity']->$param ? $vars['entity']->$param : 'default',
@@ -29,7 +35,7 @@ foreach($objects as $object_type => $subtype_array){
     echo '<tr class="' . $zebra . '"><td>';
     echo elgg_echo($subtype);
     echo "</td><td>";
-    echo $subject;
+    echo $registered_objects['object'][$subtype];
     echo "</td><td>";
     echo elgg_view('input/dropdown', $options);
     echo "</td></tr>";
@@ -42,4 +48,4 @@ foreach($objects as $object_type => $subtype_array){
     }
   }
   echo "</table><br><br>";
-}
+//}
