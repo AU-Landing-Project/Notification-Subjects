@@ -2,6 +2,9 @@
 
 x.x:
 
+1.3 ()
+    - add in missing options on settings page
+
 1.2 (06/192013):
 	- better groups support in subjects
 
