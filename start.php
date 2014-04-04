@@ -24,6 +24,7 @@ function notification_subjects_modify_subject($hook, $type, $returnvalue, $param
     $last_event = $event;
     $last_guid = $object->guid;
   }
+  
   return $last_return;
 }
 
@@ -39,7 +40,7 @@ function notification_subjects_get_hook_return($event, ElggObject $object, $curr
     // default forced for annotations at the moment
     $setting = 'default';
   }
-  
+
   switch ($setting) {
     case 'deny':
       // pretend we've handled it, don't send notification
@@ -66,57 +67,104 @@ function notification_subjects_get_hook_return($event, ElggObject $object, $curr
 
 //
 // constructs a title like:
-// Matt Beckett created a group blog post: My latest blog post
-// $owner $event {$group/null} {$subtype}: $title
+// Matt Beckett created a blog post in the group 'My Group' : My latest blog post
+// 
+// default template: '{{name}} {{action}} a {{subtype}}{{group}}: {{title}}'
 function notification_subjects_build_title($event, ElggObject $object){
   // owners name
-  $title = $object->getOwnerEntity()->name;
+  $name = $object->getOwnerEntity()->name;
   
-  // event create/update/delete - send to past tense
-  $title .= ' ' . elgg_echo('notification_subjects:event:' . $event);
+  $action = notification_subjects_get_action_string($event);
+
+  $subtype = notification_subjects_get_subtype_string($object->getSubtype());
   
-  // put in the subtype
-  $subtype = elgg_echo('notification_subjects:subtype:' . $object->getSubtype());
-  
-  if($subtype == "notification_subjects:subtype:" . $object->getSubtype()){
-    // we didn't supply a language string
-    // so lets see if the core/plugin did, otherwise just use the straight subtype
-    $subtype = elgg_echo($object->getSubtype());
-  }
-  
-  $title .= ' ' . $subtype;
   
   // find out if it's a group or personal item
   $container = $object->getContainerEntity();
+  $group = '';
   if(elgg_instanceof($container, 'group')){
-    $title .= " " . elgg_echo('notification_subjects:group', array($container->name));
+    $group = elgg_echo('notification_subjects:group', array($container->name));
   }
-  
-  $title .= ': ';
   
   // add in the title of the object
-  // limit the length to ~25 chars
-  if(!empty($object->title)){
-    $obj_title = $object->title;
+  // limit the length to ~50 chars
+  if (!empty($object->title)) {
+    $title = $object->title;
   }
-  elseif(!empty($object->name)){
-    $obj_title = $object->name;
+  elseif (!empty($object->name)) {
+    $title = $object->name;
   }
-  elseif(!empty($object->description)){
-    $obj_title = $object->description;
+  elseif (!empty($object->description)) {
+    $title = $object->description;
   }
-  else{
-    $obj_title = elgg_echo('notification_subjects:untitled');
-  }
-  
-  if(strlen($obj_title) > 25){
-    $obj_title = substr($obj_title, 0, 22) . "...";
+  else {
+    $title = elgg_echo('notification_subjects:untitled');
   }
   
-  $title .= $obj_title;
+  $title = elgg_get_excerpt($title, 25);
   
-  return $title;
+  return notification_subjects_build_subject(array(
+	  'template_param' => 'object_' . $object->getSubtype() . '_template',
+	  'name' => $name,
+	  'action' => $action,
+	  'subtype' => $subtype,
+	  'group' => $group,
+	  'title' => $title
+  ));
 }
+
+function notification_subjects_build_subject($options = array()) {
+	$template_param = $options['template_param'];
+	if (empty($template_param)) {
+		return '';
+	}
+  
+  $template = elgg_get_plugin_setting($template_param, 'notification_subjects');
+  if (empty($template)) {
+	  $template = elgg_echo('ns:' . $template_param);
+	  if ($template == ('ns:' . $template_param)) {
+		  // language string didn't exist...
+		  $template = elgg_echo('ns:template_default');
+	  }
+  }
+  
+  $notification_subject = str_replace('{{name}}', $options['name'], $template);
+  $notification_subject = str_replace('{{action}}', $options['action'], $notification_subject);
+  $notification_subject = str_replace('{{subtype}}', $options['subtype'], $notification_subject);
+  $notification_subject = str_replace('{{group}}', $options['group'], $notification_subject);
+  $notification_subject = str_replace('{{title}}', $options['title'], $notification_subject);
+  
+  return $notification_subject;
+}
+
+
+
+function notification_subjects_get_subtype_string($subtype) {
+	// put in the subtype
+  $return = elgg_echo('notification_subjects:subtype:' . $subtype);
+  if ($return == "notification_subjects:subtype:" . $subtype){
+    // we didn't supply a language string
+    // so lets see if the core/plugin did, otherwise just use the straight subtype
+    $return = elgg_echo($subtype);
+  }
+  
+  return $return;
+}
+
+
+function notification_subjects_get_action_string($action) {
+
+  if (elgg_echo('notification_subjects:event:' . $action) == "notification_subjects:event:{$action}") {
+	  // default to create if unknown
+      $return = elgg_echo('notification_subjects:event:create');
+  }
+  else {
+    $return = elgg_echo('notification_subjects:event:' . $action);
+  }
+  
+  return $return;
+}
+
 
 elgg_register_event_handler('init', 'system', 'notification_subjects_init');
  

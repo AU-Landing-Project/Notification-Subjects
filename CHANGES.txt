@@ -2,6 +2,13 @@
 
 x.x:
 
+1.4 (04/04/2014):
+    - custom per-content-type subjects
+    - templating system to customize subjects
+    - magic language strings for localization
+Version 1.4 changes were funded by Connecting Conservation
+
+
 1.3 ()
     - add in missing options on settings page
 
