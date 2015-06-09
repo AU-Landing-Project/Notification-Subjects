@@ -80,11 +80,20 @@ function notification_subjects_build_title($event, ElggObject $object){
   
   
   // find out if it's a group or personal item
+  	// note that on cron there is no logged in user
+	// and notification subjects needs enhanced access
+	if (!elgg_is_logged_in()) {
+	$ia = elgg_set_ignore_access(true);
+	}
   $container = $object->getContainerEntity();
   $group = '';
   if(elgg_instanceof($container, 'group')){
-    $group = elgg_echo('notification_subjects:group', array(elgg_get_exerpt($container->name, 45)));
+    $group = elgg_echo('notification_subjects:group', array(elgg_get_excerpt(html_entity_decode($container->name),45)));
   }
+  
+	if (!elgg_is_logged_in()) {
+		elgg_set_ignore_access($ia);
+	}
   
   // add in the title of the object
   // limit the length to ~50 chars
@@ -101,7 +110,7 @@ function notification_subjects_build_title($event, ElggObject $object){
     $title = elgg_echo('notification_subjects:untitled');
   }
   
-  $title = elgg_get_excerpt($title, 45);
+  $title = elgg_get_excerpt(html_entity_decode($title), 45);
   
   return notification_subjects_build_subject(array(
 	  'template_param' => 'object_' . $object->getSubtype() . '_template',
@@ -129,7 +138,7 @@ function notification_subjects_build_subject($options = array()) {
   }
   
   $notification_subject = str_replace('{{name}}', $options['name'], $template);
-  $notification_subject = str_replace('{{action}}', $options['action'], $notification_subject);
+  $notification_subject = str_replace('{{action}}', ucfirst($options['action']), $notification_subject);
   $notification_subject = str_replace('{{subtype}}', $options['subtype'], $notification_subject);
   $notification_subject = str_replace('{{group}}', $options['group'], $notification_subject);
   $notification_subject = str_replace('{{title}}', $options['title'], $notification_subject);

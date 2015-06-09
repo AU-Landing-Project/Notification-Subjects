@@ -5,9 +5,14 @@
 $objects = get_registered_entity_types('object');
 $registered_objects = elgg_get_config('register_objects');
 
-echo elgg_view('output/longtext', array(
-	'value' => elgg_echo('notification_subjects:disclaimer')
-));
+//note some items in $registered_objects are not in $objects, make them
+foreach ($registered_objects['object'] as $subtype => $subject) {
+	if (!in_array($subtype, $objects)) {
+		$objects[] = $subtype;
+	}
+}
+
+asort($objects);
 
 
   echo "<label>" . elgg_echo($object_type) . "</label><br>";

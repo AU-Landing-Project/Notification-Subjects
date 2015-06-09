@@ -2,6 +2,9 @@
 
 x.x:
 
+1.5 (06/09/2015):
+ - html entity decode group and content title/names
+
 1.4 (04/04/2014):
     - custom per-content-type subjects
     - templating system to customize subjects
