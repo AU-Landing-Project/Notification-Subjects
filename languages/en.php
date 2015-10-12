@@ -1,6 +1,6 @@
 <?php
 
-$english = array(
+return array(
     'notification_subjects' => "Notification Subjects",
     'notification_subjects:action' => "Settings",
     'notification_subjects:default:subject' => "Default Subject",
@@ -58,4 +58,3 @@ Subtypes can be translated with language strings in the format of 'notification_
 Group names will be passed into the language string 'notification_subjects:group'",
 );
 					
-add_translation("en",$english);

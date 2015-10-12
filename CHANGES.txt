@@ -2,6 +2,10 @@
 
 x.x:
 
+2.0.0 (10/12/2015):
+ - Elgg 1.9+ upgrade
+ - subject language matches that of recipient
+
 1.5 (06/09/2015):
  - html entity decode group and content title/names
 
