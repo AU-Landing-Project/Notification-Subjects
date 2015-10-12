@@ -1,0 +1,20 @@
+{
+    "name": "au/notification_subjects",
+    "type": "elgg-plugin",
+    "description": "Provides more descriptive email/message subjects for object notifications",
+    "homepage": "https://github.com/AU-Landing-Project/Notification-Subjects",
+    "keywords": ["elgg", "plugin", "notifications", "subject", "notification subjects", "AU"],
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Matt Beckett"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/AU-Landing-Project/Notification-Subjects/issues"
+    },
+    "require": {
+        "php": ">=5.4",
+        "composer/installers": ">=1.0.8"
+    }
+}
