@@ -9,7 +9,7 @@ require_once __DIR__ . '/lib/functions.php';
 
 elgg_register_event_handler('init', 'system', __NAMESPACE__ . '\\init');
 
-function init(){
+function init() {
   elgg_extend_view('css/admin', 'css/notification_subjects');
   
   // see if we need to prevent the notification
